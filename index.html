@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Somiddho - Smart Scanner</title>
+  
+  <!-- PWA Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0df259">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Somiddho">
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3126/3126504.png">
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "var(--primary-color, #0df259)",
+            "background-light": "#f5f8f6",
+            "background-dark": "#101a14",
+          },
+          fontFamily: {
+            "display": ["Space Grotesk"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    :root {
+      --primary-color: #0df259;
+    }
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #101a14;
+      color: white;
+      overflow-x: hidden;
+    }
+    .scanner-line {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+      box-shadow: 0 0 15px var(--primary-color);
+      position: absolute;
+      width: 100%;
+      top: 50%;
+      animation: scan 2s linear infinite;
+    }
+    @keyframes scan {
+      0% { top: 0%; }
+      50% { top: 100%; }
+      100% { top: 0%; }
+    }
+    .glass-panel {
+      background: rgba(16, 26, 20, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .hud-corner {
+      width: 32px;
+      height: 32px;
+      border-color: var(--primary-color);
+      position: absolute;
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    @media print {
+      nav, header button, footer, .no-print {
+        display: none !important;
+      }
+      body {
+        background: white !important;
+        color: black !important;
+      }
+      #root {
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .glass-panel {
+        background: transparent !important;
+        border: 1px solid #ddd !important;
+        color: black !important;
+        box-shadow: none !important;
+        border-radius: 12px !important;
+      }
+      .text-white, .text-white\/30, .text-white\/40, .text-white\/50 {
+        color: black !important;
+      }
+      .bg-primary {
+        background-color: #0df259 !important;
+        -webkit-print-color-adjust: exact;
+      }
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "jsqr": "https://esm.sh/jsqr@1.4.0"
+  }
+}
+</script>
+</head>
+<body class="bg-background-dark text-white font-display">
+  <div id="root"></div>
+</body>
+</html>

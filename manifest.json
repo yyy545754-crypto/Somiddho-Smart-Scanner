@@ -1,0 +1,23 @@
+
+{
+  "name": "Somiddho Smart Scanner",
+  "short_name": "Somiddho",
+  "description": "A professional, fast, and secure QR code scanner and generator.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#101a14",
+  "theme_color": "#0df259",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3126/3126504.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3126/3126504.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
