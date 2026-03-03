@@ -2,7 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { QRType } from '../types';
 
-const GeneratorView: React.FC = () => {
+interface GeneratorViewProps {
+  t: any;
+}
+
+const GeneratorView: React.FC<GeneratorViewProps> = ({ t }) => {
   const [type, setType] = useState<QRType>(QRType.URL);
   const [color, setColor] = useState('#0df259');
   const [generatedUrl, setGeneratedUrl] = useState<string | null>(null);
@@ -87,10 +91,10 @@ const GeneratorView: React.FC = () => {
   const colors = ['#0df259', '#1392ec', '#f43f5e', '#10b981', '#f59e0b', '#8b5cf6', '#ffffff'];
 
   return (
-    <div className="h-full overflow-y-auto hide-scrollbar bg-background-dark p-6 pb-32">
+    <div className="h-full overflow-y-auto hide-scrollbar bg-rose-950 p-6 pb-32">
       <header className="flex justify-between items-center py-4 mb-2">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">QR Generator</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-white">{t.generator}</h1>
           <p className="text-primary text-sm font-medium">Somiddho Pro</p>
         </div>
         <button className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
@@ -100,7 +104,7 @@ const GeneratorView: React.FC = () => {
 
       {/* Type Selector */}
       <section className="mb-8">
-        <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mb-4 px-1">Select Type</h2>
+        <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mb-4 px-1">{t.select_type}</h2>
         <div className="flex gap-3 overflow-x-auto hide-scrollbar -mx-6 px-6">
           {types.map((t) => (
             <div key={t.id} className="flex-shrink-0 flex flex-col items-center gap-2">
@@ -119,7 +123,7 @@ const GeneratorView: React.FC = () => {
       {/* Dynamic Input Fields */}
       <section className="mb-8">
         <div className="glass-panel rounded-3xl p-6 border border-white/5">
-          <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mb-4">Content Input</label>
+          <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mb-4">{t.content_input}</label>
           
           <div className="space-y-4">
             {type === QRType.WIFI && (
@@ -183,7 +187,7 @@ const GeneratorView: React.FC = () => {
           <div className="flex items-center gap-3">
              <span className="material-icons-round text-primary text-2xl">palette</span>
              <div>
-                <p className="text-xs font-bold text-white leading-none">QR Color</p>
+                <p className="text-xs font-bold text-white leading-none">{t.qr_color}</p>
                 <p className="text-[9px] text-white/30 uppercase mt-1 tracking-widest">{color}</p>
              </div>
           </div>
@@ -209,7 +213,7 @@ const GeneratorView: React.FC = () => {
           ) : (
             <>
               <span className="material-icons-round">qr_code_2</span>
-              <span>Generate QR Code</span>
+              <span>{t.generate_qr}</span>
             </>
           )}
         </button>
@@ -224,7 +228,7 @@ const GeneratorView: React.FC = () => {
                 onClick={handleSaveImage}
                 className="flex-1 bg-white/5 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white/60 hover:bg-white/10 hover:text-white transition-all"
               >
-                Download
+                {t.download}
               </button>
               <button 
                 className="flex-1 bg-primary py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-black shadow-lg shadow-primary/20 active:scale-95 transition-all"
@@ -236,7 +240,7 @@ const GeneratorView: React.FC = () => {
                   }
                 }}
               >
-                Share
+                {t.share}
               </button>
             </div>
           </div>

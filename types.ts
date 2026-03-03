@@ -18,6 +18,20 @@ export enum QRType {
   WHATSAPP = 'WHATSAPP'
 }
 
+export enum SearchEngine {
+  GOOGLE = 'Google',
+  BING = 'Bing',
+  DUCKDUCKGO = 'DuckDuckGo'
+}
+
+export enum Language {
+  EN = 'English',
+  BN = 'Bengali',
+  JP = 'Japanese',
+  KR = 'Korean',
+  RU = 'Russian'
+}
+
 export interface ScanResult {
   id: string;
   data: string;

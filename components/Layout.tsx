@@ -6,48 +6,49 @@ interface LayoutProps {
   children: React.ReactNode;
   currentView: View;
   setView: (view: View) => void;
+  t: any;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, currentView, setView }) => {
+const Layout: React.FC<LayoutProps> = ({ children, currentView, setView, t }) => {
   return (
-    <div className="relative h-screen flex flex-col justify-between overflow-hidden bg-background-dark text-white">
+    <div className="relative h-screen flex flex-col justify-between overflow-hidden bg-rose-950 text-white">
       {/* Dynamic Content */}
       <div className="flex-1 relative overflow-hidden">
         {children}
       </div>
 
       {/* Navigation Bar */}
-      <nav className="z-50 bg-background-dark/95 backdrop-blur-2xl border-t border-white/5 pt-3 pb-8 px-6">
+      <nav className="z-50 bg-rose-950/95 backdrop-blur-2xl border-t border-white/5 pt-3 pb-8 px-6">
         <div className="flex items-center justify-between max-w-lg mx-auto">
           <NavItem 
             isActive={currentView === View.SCANNER} 
             onClick={() => setView(View.SCANNER)} 
             icon="center_focus_strong" 
-            label="Scanner" 
+            label={t.scanner} 
           />
           <NavItem 
             isActive={currentView === View.GENERATOR} 
             onClick={() => setView(View.GENERATOR)} 
             icon="add_box" 
-            label="Create" 
+            label={t.generator} 
           />
           <NavItem 
             isActive={currentView === View.FAVORITES} 
             onClick={() => setView(View.FAVORITES)} 
             icon="star" 
-            label="Starred" 
+            label={t.favorites} 
           />
           <NavItem 
             isActive={currentView === View.HISTORY} 
             onClick={() => setView(View.HISTORY)} 
             icon="folder_shared" 
-            label="History" 
+            label={t.history} 
           />
           <NavItem 
             isActive={currentView === View.SETTINGS} 
             onClick={() => setView(View.SETTINGS)} 
             icon="settings" 
-            label="Config" 
+            label={t.settings} 
           />
         </div>
       </nav>

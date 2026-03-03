@@ -9,8 +9,8 @@ interface LegalViewProps {
 
 const LegalView: React.FC<LegalViewProps> = ({ title, content, onBack }) => {
   return (
-    <div className="h-full overflow-y-auto bg-background-dark text-white font-display flex flex-col">
-      <header className="px-6 py-4 flex items-center gap-4 sticky top-0 z-50 bg-background-dark/80 backdrop-blur-xl border-b border-white/5">
+    <div className="h-full overflow-y-auto bg-rose-950 text-white font-display flex flex-col">
+      <header className="px-6 py-4 flex items-center gap-4 sticky top-0 z-50 bg-rose-950/80 backdrop-blur-xl border-b border-white/5">
         <button onClick={onBack} className="w-10 h-10 flex items-center justify-center text-white/60 hover:text-white transition-colors">
           <span className="material-icons-round">arrow_back</span>
         </button>

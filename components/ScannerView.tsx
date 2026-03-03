@@ -9,9 +9,11 @@ interface ScannerViewProps {
   onViewRecent: (result: ScanResult) => void;
   onViewHistory?: () => void;
   onViewFavorites?: () => void;
+  isAutoCopy?: boolean;
+  t: any;
 }
 
-const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRecent, onViewHistory, onViewFavorites }) => {
+const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRecent, onViewHistory, onViewFavorites, isAutoCopy, t }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -20,6 +22,7 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
   const [flashOn, setFlashOn] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [scanPaused, setScanPaused] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     async function setupCamera() {
@@ -62,6 +65,8 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
 
     onResult(result);
     setIsProcessing(false);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 2000);
     setTimeout(() => setScanPaused(false), 2000);
   };
 
@@ -138,7 +143,7 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
     <div className="relative h-full flex flex-col">
       <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
       
-      <div className="absolute inset-0 z-0 bg-black">
+      <div className="absolute inset-0 z-0 bg-rose-950">
         {cameraError ? (
           <div className="flex flex-col items-center justify-center h-full p-10 text-center">
             <span className="material-icons-round text-6xl text-white/10 mb-4">videocam_off</span>
@@ -148,7 +153,7 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
           <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
         )}
         <canvas ref={canvasRef} className="hidden" />
-        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="absolute inset-0 bg-rose-950/40"></div>
       </div>
 
       <header className="relative z-10 px-6 py-6 flex items-center justify-between">
@@ -158,7 +163,7 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
           </div>
           <div>
             <h1 className="text-lg font-bold leading-none">Somiddho</h1>
-            <p className="text-[9px] uppercase tracking-[0.2em] text-primary font-bold mt-1">Pro Scanner</p>
+            <p className="text-[9px] uppercase tracking-[0.2em] text-primary font-bold mt-1">{t.scanner}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -185,7 +190,13 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
           <div className="hud-corner bottom-0 right-0 border-b-2 border-r-2 rounded-br-lg"></div>
         </div>
         
-        <p className="mt-8 text-white/40 text-[10px] font-medium uppercase tracking-[0.2em]">Position QR code within frame</p>
+        <p className="mt-8 text-white/40 text-[10px] font-medium uppercase tracking-[0.2em]">{t.position_qr}</p>
+
+        {showToast && (
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-black px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl animate-in zoom-in-95 fade-in duration-300 z-50">
+            {isAutoCopy ? t.saved_copied : t.scan_saved}
+          </div>
+        )}
 
         <div className="mt-auto w-full px-6 pb-8 space-y-4">
           <div className="flex gap-4">
@@ -194,7 +205,7 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
               className="flex-1 h-14 glass-panel rounded-2xl flex items-center justify-center gap-2 text-white/60 hover:text-white transition-all active:scale-95 border-white/5"
             >
               <span className="material-icons-round text-xl">photo_library</span>
-              <span className="text-[10px] font-bold uppercase tracking-widest">Gallery</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest">{t.gallery}</span>
             </button>
             <button 
               onClick={() => onViewHistory && onViewHistory()}
@@ -222,7 +233,7 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[9px] text-primary font-black uppercase tracking-widest">Last Scan Found</p>
+              <p className="text-[9px] text-primary font-black uppercase tracking-widest">{t.last_scan_found}</p>
               <p className="text-xs font-bold text-white/80 truncate mt-0.5">{lastScan.data}</p>
             </div>
             <span className="material-icons-round text-white/20">chevron_right</span>

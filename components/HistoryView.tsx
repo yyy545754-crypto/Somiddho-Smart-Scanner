@@ -7,25 +7,82 @@ interface HistoryViewProps {
   clearHistory: () => void;
   deleteItem: (id: string) => void;
   onSelectItem: (result: ScanResult) => void;
+  t: any;
 }
 
-const HistoryView: React.FC<HistoryViewProps> = ({ history, clearHistory, deleteItem, onSelectItem }) => {
+const HistoryView: React.FC<HistoryViewProps> = ({ history, clearHistory, deleteItem, onSelectItem, t }) => {
+  const exportToJSON = () => {
+    const dataStr = JSON.stringify(history, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    const exportFileDefaultName = `somiddho-history-${new Date().toISOString()}.json`;
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
+
+  const exportToCSV = () => {
+    const headers = ['ID', 'Type', 'Data', 'Timestamp', 'Date'];
+    const rows = history.map(item => [
+      item.id,
+      item.type,
+      `"${item.data.replace(/"/g, '""')}"`,
+      item.timestamp,
+      new Date(item.timestamp).toLocaleString()
+    ]);
+    
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(e => e.join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `somiddho-history-${new Date().toISOString()}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
-    <div className="h-full overflow-y-auto bg-background-dark p-6 hide-scrollbar">
+    <div className="h-full overflow-y-auto bg-rose-950 p-6 hide-scrollbar">
       <header className="flex justify-between items-center py-8 mb-4">
         <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">History</h1>
-          <p className="text-primary text-sm font-medium uppercase tracking-widest mt-1">{history.length} Saved Scans</p>
+          <h1 className="text-3xl font-bold text-white tracking-tight">{t.history}</h1>
+          <p className="text-primary text-sm font-medium uppercase tracking-widest mt-1">{history.length} {t.saved_scans}</p>
         </div>
-        <button onClick={clearHistory} className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-white/40 hover:bg-red-500/10 hover:text-red-500 transition-all">
-          <span className="material-icons-round">delete_sweep</span>
-        </button>
+        <div className="flex gap-2">
+          {history.length > 0 && (
+            <>
+              <button 
+                onClick={exportToCSV} 
+                className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-white/40 hover:bg-primary/10 hover:text-primary transition-all"
+                title="Export CSV"
+              >
+                <span className="material-icons-round">table_view</span>
+              </button>
+              <button 
+                onClick={exportToJSON} 
+                className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-white/40 hover:bg-primary/10 hover:text-primary transition-all"
+                title="Export JSON"
+              >
+                <span className="material-icons-round">data_object</span>
+              </button>
+            </>
+          )}
+          <button onClick={clearHistory} className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-white/40 hover:bg-red-500/10 hover:text-red-500 transition-all">
+            <span className="material-icons-round">delete_sweep</span>
+          </button>
+        </div>
       </header>
 
       {history.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-32 opacity-10">
           <span className="material-icons-round text-9xl mb-4">history</span>
-          <p className="text-sm font-bold uppercase tracking-[0.3em]">Empty Activity</p>
+          <p className="text-sm font-bold uppercase tracking-[0.3em]">{t.empty_activity}</p>
         </div>
       ) : (
         <div className="space-y-4 mb-32">

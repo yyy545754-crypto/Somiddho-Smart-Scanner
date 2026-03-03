@@ -6,15 +6,16 @@ interface FavoritesViewProps {
   favorites: ScanResult[];
   onSelectItem: (result: ScanResult) => void;
   toggleFavorite: (id: string) => void;
+  t: any;
 }
 
-const FavoritesView: React.FC<FavoritesViewProps> = ({ favorites, onSelectItem, toggleFavorite }) => {
+const FavoritesView: React.FC<FavoritesViewProps> = ({ favorites, onSelectItem, toggleFavorite, t }) => {
   return (
-    <div className="h-full overflow-y-auto bg-background-dark p-6 hide-scrollbar">
+    <div className="h-full overflow-y-auto bg-rose-950 p-6 hide-scrollbar">
       <header className="flex justify-between items-center py-8 mb-4">
         <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">Favorites</h1>
-          <p className="text-primary text-sm font-medium uppercase tracking-widest mt-1">{favorites.length} Starred Scans</p>
+          <h1 className="text-3xl font-bold text-white tracking-tight">{t.favorites}</h1>
+          <p className="text-primary text-sm font-medium uppercase tracking-widest mt-1">{favorites.length} {t.saved_scans}</p>
         </div>
         <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
           <span className="material-icons-round">star</span>
@@ -24,7 +25,7 @@ const FavoritesView: React.FC<FavoritesViewProps> = ({ favorites, onSelectItem, 
       {favorites.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-32 opacity-10">
           <span className="material-icons-round text-9xl mb-4">star_border</span>
-          <p className="text-sm font-bold uppercase tracking-[0.3em]">No Favorites Yet</p>
+          <p className="text-sm font-bold uppercase tracking-[0.3em]">{t.empty_activity}</p>
         </div>
       ) : (
         <div className="space-y-4 mb-32">
