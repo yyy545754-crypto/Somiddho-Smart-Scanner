@@ -15,6 +15,7 @@ interface SettingsViewProps {
   onReset: () => void;
   onOpenPrivacy: () => void;
   onOpenTerms: () => void;
+  onViewFavorites: () => void;
   t: any;
   scanConfirmation: boolean;
   setScanConfirmation: (val: boolean) => void;
@@ -33,6 +34,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
   onReset,
   onOpenPrivacy,
   onOpenTerms,
+  onViewFavorites,
   t,
   scanConfirmation,
   setScanConfirmation
@@ -190,27 +192,25 @@ const SettingsView: React.FC<SettingsViewProps> = ({
           </div>
         </section>
 
-        {/* Shopping Section */}
+        {/* Favorites Section */}
         <section>
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mb-4 px-1">Exclusive Offers</h2>
+          <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mb-4 px-1">{t.favorites}</h2>
           <div className="glass-panel rounded-3xl overflow-hidden">
-            <a 
-              href="https://amzn.to/4l5mVYV"
-              target="_blank"
-              rel="noopener noreferrer"
+            <button 
+              onClick={onViewFavorites}
               className="w-full flex items-center justify-between p-5 hover:bg-white/5 transition-colors text-left"
             >
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500">
-                  <span className="material-icons-round">shopping_bag</span>
+                <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                  <span className="material-icons-round">star</span>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-white">{t.shopping}</p>
-                  <p className="text-xs text-white/40">{t.shopping_desc}</p>
+                  <p className="text-sm font-semibold text-white">{t.favorites}</p>
+                  <p className="text-xs text-white/40">View your starred items</p>
                 </div>
               </div>
               <span className="material-icons-round text-white/10">chevron_right</span>
-            </a>
+            </button>
           </div>
         </section>
 

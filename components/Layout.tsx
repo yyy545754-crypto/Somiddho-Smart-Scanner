@@ -33,10 +33,10 @@ const Layout: React.FC<LayoutProps> = ({ children, currentView, setView, t }) =>
             label={t.generator} 
           />
           <NavItem 
-            isActive={currentView === View.FAVORITES} 
-            onClick={() => setView(View.FAVORITES)} 
-            icon="star" 
-            label={t.favorites} 
+            isActive={currentView === View.SHOPPING} 
+            onClick={() => setView(View.SHOPPING)} 
+            icon="shopping_bag" 
+            label={t.shopping} 
           />
           <NavItem 
             isActive={currentView === View.HISTORY} 

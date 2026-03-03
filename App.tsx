@@ -195,8 +195,34 @@ const App: React.FC = () => {
             onReset={() => { if(confirm(t.reset_data + "?")) { setHistory([]); localStorage.clear(); window.location.reload(); } }}
             onOpenPrivacy={() => setCurrentView(View.PRIVACY)}
             onOpenTerms={() => setCurrentView(View.TERMS)}
+            onViewFavorites={() => setCurrentView(View.FAVORITES)}
             t={t}
           />
+        );
+      case View.SHOPPING:
+        return (
+          <div className="h-full overflow-y-auto bg-rose-950 p-6 pb-32 hide-scrollbar">
+            <header className="py-8">
+              <h1 className="text-3xl font-bold tracking-tight text-white">{t.shopping}</h1>
+              <p className="text-primary text-sm font-medium mt-1 uppercase tracking-widest">Exclusive Offers</p>
+            </header>
+            <div className="glass-panel rounded-3xl overflow-hidden p-8 text-center">
+              <div className="w-20 h-20 rounded-3xl bg-amber-500/10 flex items-center justify-center text-amber-500 mx-auto mb-6">
+                <span className="material-icons-round text-4xl">shopping_bag</span>
+              </div>
+              <h2 className="text-xl font-bold text-white mb-2">{t.shopping}</h2>
+              <p className="text-white/60 mb-8">{t.shopping_desc}</p>
+              <a 
+                href="https://amzn.to/4l5mVYV"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-amber-500 text-black px-8 py-4 rounded-2xl font-bold uppercase tracking-widest hover:scale-105 transition-transform"
+              >
+                Shop Now
+                <span className="material-icons-round">open_in_new</span>
+              </a>
+            </div>
+          </div>
         );
       case View.RESULT_DETAILS:
         return selectedResult ? (
