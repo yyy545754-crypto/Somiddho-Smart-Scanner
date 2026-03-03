@@ -18,7 +18,6 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [flashOn, setFlashOn] = useState(false);
-  const [zoom, setZoom] = useState(1);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [scanPaused, setScanPaused] = useState(false);
 
@@ -146,10 +145,10 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
             <p className="text-white/30 text-xs font-medium uppercase tracking-widest">{cameraError}</p>
           </div>
         ) : (
-          <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover opacity-60" />
+          <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
         )}
         <canvas ref={canvasRef} className="hidden" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80"></div>
+        <div className="absolute inset-0 bg-black/40"></div>
       </div>
 
       <header className="relative z-10 px-6 py-6 flex items-center justify-between">
@@ -179,15 +178,14 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
       </header>
 
       <main className="relative z-10 flex-1 flex flex-col items-center justify-center">
-        <div className="relative w-64 h-64 sm:w-80 sm:h-80 transition-all duration-500">
-          <div className="hud-corner top-0 left-0 border-t-4 border-l-4 rounded-tl-2xl shadow-[0_0_10px_var(--primary-color)]"></div>
-          <div className="hud-corner top-0 right-0 border-t-4 border-r-4 rounded-tr-2xl shadow-[0_0_10px_var(--primary-color)]"></div>
-          <div className="hud-corner bottom-0 left-0 border-b-4 border-l-4 rounded-bl-2xl shadow-[0_0_10px_var(--primary-color)]"></div>
-          <div className="hud-corner bottom-0 right-0 border-b-4 border-r-4 rounded-br-2xl shadow-[0_0_10px_var(--primary-color)]"></div>
-          <div className="scanner-line opacity-60"></div>
+        <div className="relative w-64 h-64 sm:w-80 sm:h-80">
+          <div className="hud-corner top-0 left-0 border-t-2 border-l-2 rounded-tl-lg"></div>
+          <div className="hud-corner top-0 right-0 border-t-2 border-r-2 rounded-tr-lg"></div>
+          <div className="hud-corner bottom-0 left-0 border-b-2 border-l-2 rounded-bl-lg"></div>
+          <div className="hud-corner bottom-0 right-0 border-b-2 border-r-2 rounded-br-lg"></div>
         </div>
         
-        <p className="mt-8 text-white/30 text-[10px] font-bold uppercase tracking-[0.3em] animate-pulse">Align QR code to scan</p>
+        <p className="mt-8 text-white/40 text-[10px] font-medium uppercase tracking-[0.2em]">Position QR code within frame</p>
 
         <div className="mt-auto w-full px-6 pb-8 space-y-4">
           <div className="flex gap-4">
@@ -206,24 +204,7 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
             </button>
           </div>
 
-          <div className="bg-black/60 backdrop-blur-2xl rounded-[2rem] p-5 border border-white/5">
-            <div className="flex justify-center gap-4 mb-4">
-              {[1, 2, 5].map((val) => (
-                <button
-                  key={val}
-                  onClick={() => setZoom(val)}
-                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${zoom === val ? 'bg-primary text-black font-bold' : 'bg-white/5 text-white/40'}`}
-                >
-                  <span className="text-[10px] uppercase font-black">{val}x</span>
-                </button>
-              ))}
-            </div>
-            <input 
-              type="range" min="1" max="10" step="0.1" value={zoom} 
-              onChange={(e) => setZoom(parseFloat(e.target.value))} 
-              className="w-full accent-primary h-1 bg-white/10 rounded-full appearance-none" 
-            />
-          </div>
+
         </div>
       </main>
 

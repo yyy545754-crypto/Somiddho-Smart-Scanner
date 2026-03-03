@@ -7,7 +7,7 @@
   <title>Somiddho - Smart Scanner</title>
   
   <!-- PWA Meta Tags -->
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#0df259">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -30,20 +30,7 @@
       color: white;
       overflow-x: hidden;
     }
-    .scanner-line {
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
-      box-shadow: 0 0 15px var(--primary-color);
-      position: absolute;
-      width: 100%;
-      top: 50%;
-      animation: scan 2s linear infinite;
-    }
-    @keyframes scan {
-      0% { top: 0%; }
-      50% { top: 100%; }
-      100% { top: 0%; }
-    }
+
     .glass-panel {
       background: rgba(16, 26, 20, 0.7);
       backdrop-filter: blur(12px);
@@ -51,8 +38,8 @@
       border: 1px solid rgba(255, 255, 255, 0.05);
     }
     .hud-corner {
-      width: 32px;
-      height: 32px;
+      width: 24px;
+      height: 24px;
       border-color: var(--primary-color);
       position: absolute;
     }
@@ -98,16 +85,15 @@
     "react": "https://esm.sh/react@^19.2.4",
     "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
     "react/": "https://esm.sh/react@^19.2.4/",
+    "jsqr": "https://esm.sh/jsqr@^1.4.0",
     "vite": "https://esm.sh/vite@^7.3.1",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.4",
-    "jsqr": "https://esm.sh/jsqr@^1.4.0"
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.4"
   }
 }
 </script>
 </head>
 <body class="bg-background-dark text-white font-display">
   <div id="root"></div>
-  <!-- Use a clean path for Vite -->
-  <script type="module" src="/index.tsx"></script>
+  <script type="module" src="./index.tsx"></script>
 </body>
 </html>
