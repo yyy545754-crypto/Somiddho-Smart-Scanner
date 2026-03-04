@@ -70,7 +70,8 @@ export const translations: Record<Language, any> = {
     camera_error: 'Camera Error',
     camera_not_supported: 'Your browser or app does not support camera access.',
     grant_permission: 'Grant Permission',
-    retry_camera: 'Retry Camera'
+    retry_camera: 'Retry Camera',
+    tap_to_start: 'Tap to Start Camera'
   },
   [Language.BN]: {
     scanner: 'স্ক্যানার',
@@ -140,7 +141,8 @@ export const translations: Record<Language, any> = {
     camera_error: 'ক্যামেরা এরর',
     camera_not_supported: 'আপনার ব্রাউজার বা অ্যাপটি ক্যামেরা সাপোর্ট করে না।',
     grant_permission: 'অনুমতি দিন',
-    retry_camera: 'পুনরায় চেষ্টা করুন'
+    retry_camera: 'পুনরায় চেষ্টা করুন',
+    tap_to_start: 'ক্যামেরা চালু করতে ক্লিক করুন'
   },
   [Language.JP]: {
     scanner: 'スキャナー',
@@ -203,7 +205,8 @@ export const translations: Record<Language, any> = {
     cancel: 'キャンセル',
     confirm: '確認',
     scan_confirmation: 'スキャン確認',
-    scan_confirmation_desc: 'リンクを開く前に確認する'
+    scan_confirmation_desc: 'リンクを開く前に確認する',
+    tap_to_start: 'タップしてカメラを開始'
   },
   [Language.KR]: {
     scanner: '스캐너',
@@ -266,7 +269,8 @@ export const translations: Record<Language, any> = {
     cancel: '취소',
     confirm: '확인',
     scan_confirmation: '스캔 확인',
-    scan_confirmation_desc: '링크를 열기 전에 확인'
+    scan_confirmation_desc: '링크를 열기 전에 확인',
+    tap_to_start: '탭하여 카메라 시작'
   },
   [Language.RU]: {
     scanner: 'Сканер',
@@ -329,6 +333,7 @@ export const translations: Record<Language, any> = {
     cancel: 'Отмена',
     confirm: 'Подтвердить',
     scan_confirmation: 'Подтверждение сканирования',
-    scan_confirmation_desc: 'Подтверждать перед открытием ссылок'
+    scan_confirmation_desc: 'Подтверждать перед открытием ссылок',
+    tap_to_start: 'Нажмите, чтобы запустить камеру'
   }
 };

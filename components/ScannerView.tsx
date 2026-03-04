@@ -23,6 +23,8 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [scanPaused, setScanPaused] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [showTapToStart, setShowTapToStart] = useState(false);
 
   useEffect(() => {
     let activeStream: MediaStream | null = null;
@@ -40,14 +42,14 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
         const constraintSets = [
           { 
             video: { 
-              facingMode: { ideal: 'environment' },
-              width: { ideal: 1280 },
-              height: { ideal: 720 }
+              facingMode: 'environment'
             } 
           },
           { 
             video: { 
-              facingMode: 'environment' 
+              facingMode: { ideal: 'environment' },
+              width: { ideal: 1280 },
+              height: { ideal: 720 }
             } 
           },
           { 
@@ -76,16 +78,32 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
         setStream(mediaStream);
         
         if (videoRef.current) {
-          videoRef.current.srcObject = mediaStream;
-          videoRef.current.setAttribute('playsinline', 'true');
-          videoRef.current.setAttribute('muted', 'true');
-          videoRef.current.setAttribute('autoplay', 'true');
+          const video = videoRef.current;
+          video.setAttribute('playsinline', 'true');
+          video.setAttribute('webkit-playsinline', 'true');
+          video.muted = true;
+          video.srcObject = mediaStream;
           
-          videoRef.current.onloadedmetadata = () => {
-            videoRef.current?.play().catch(err => {
-              console.warn("Autoplay failed, waiting for user interaction", err);
-            });
+          video.onplaying = () => {
+            setIsVideoPlaying(true);
+            setShowTapToStart(false);
           };
+
+          // Ensure it starts playing
+          const playPromise = video.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(err => {
+              console.warn("Autoplay prevented, will wait for user interaction", err);
+              setShowTapToStart(true);
+            });
+          }
+
+          // Check if it's actually playing after a short delay
+          setTimeout(() => {
+            if (video.paused || video.ended || video.readyState < 2) {
+              setShowTapToStart(true);
+            }
+          }, 1500);
         }
       } catch (err: any) {
         console.error("Camera setup error:", err);
@@ -143,8 +161,11 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
   };
 
   const handleVideoClick = () => {
-    if (videoRef.current && videoRef.current.paused) {
-      videoRef.current.play().catch(console.error);
+    if (videoRef.current) {
+      videoRef.current.play().then(() => {
+        setIsVideoPlaying(true);
+        setShowTapToStart(false);
+      }).catch(console.error);
     }
   };
 
@@ -244,42 +265,55 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
     <div className="relative h-full flex flex-col">
       <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
       
-      <div className="absolute inset-0 z-0 bg-rose-950">
-        {cameraError ? (
-          <div className="flex flex-col items-center justify-center h-full p-10 text-center">
-            <span className="material-icons-round text-6xl text-white/10 mb-4">videocam_off</span>
-            <p className="text-white/30 text-xs font-medium uppercase tracking-widest mb-6 max-w-xs mx-auto leading-relaxed">{cameraError}</p>
-            <div className="flex flex-col gap-3 w-full max-w-[200px]">
-              {(cameraError.includes('permission') || cameraError.includes('অনুমতি')) ? (
-                <button 
-                  onClick={requestPermission}
-                  className="bg-primary text-black px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl active:scale-95 transition-transform"
-                >
-                  {t.grant_permission}
-                </button>
-              ) : (
-                <button 
-                  onClick={retryCamera}
-                  className="bg-primary text-black px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl active:scale-95 transition-transform"
-                >
-                  {t.retry_camera}
-                </button>
-              )}
+        <div className="absolute inset-0 z-0 bg-rose-950">
+          {cameraError ? (
+            <div className="flex flex-col items-center justify-center h-full p-10 text-center">
+              <span className="material-icons-round text-6xl text-white/10 mb-4">videocam_off</span>
+              <p className="text-white/30 text-xs font-medium uppercase tracking-widest mb-6 max-w-xs mx-auto leading-relaxed">{cameraError}</p>
+              <div className="flex flex-col gap-3 w-full max-w-[200px]">
+                {(cameraError.includes('permission') || cameraError.includes('অনুমতি')) ? (
+                  <button 
+                    onClick={requestPermission}
+                    className="bg-primary text-black px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl active:scale-95 transition-transform"
+                  >
+                    {t.grant_permission}
+                  </button>
+                ) : (
+                  <button 
+                    onClick={retryCamera}
+                    className="bg-primary text-black px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl active:scale-95 transition-transform"
+                  >
+                    {t.retry_camera}
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-        ) : (
-          <video 
-            ref={videoRef} 
-            autoPlay 
-            playsInline 
-            muted 
-            onClick={handleVideoClick}
-            className="w-full h-full object-cover cursor-pointer" 
-          />
-        )}
-        <canvas ref={canvasRef} className="hidden" />
-        <div className="absolute inset-0 bg-rose-950/40"></div>
-      </div>
+          ) : (
+            <>
+              <video 
+                ref={videoRef} 
+                autoPlay 
+                playsInline 
+                muted 
+                onClick={handleVideoClick}
+                className="w-full h-full object-cover cursor-pointer" 
+              />
+              {showTapToStart && (
+                <div 
+                  onClick={handleVideoClick}
+                  className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm cursor-pointer animate-in fade-in duration-500"
+                >
+                  <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4 animate-pulse">
+                    <span className="material-icons-round text-primary text-3xl">play_arrow</span>
+                  </div>
+                  <p className="text-white font-bold uppercase tracking-widest text-[10px]">{t.tap_to_start || "Tap to Start Camera"}</p>
+                </div>
+              )}
+            </>
+          )}
+          <canvas ref={canvasRef} className="hidden" />
+          <div className="absolute inset-0 bg-rose-950/40"></div>
+        </div>
 
       <header className="relative z-10 px-6 py-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
