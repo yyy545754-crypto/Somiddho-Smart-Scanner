@@ -146,10 +146,21 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
   const requestPermission = async () => {
     try {
       setCameraError(null);
-      // Try to get any video stream to trigger the browser permission dialog
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      console.log("Manually requesting permission...");
+      
+      // Some WebViews require a very specific sequence
+      const constraints = { 
+        video: { 
+          facingMode: 'environment',
+          width: { ideal: 640 },
+          height: { ideal: 480 }
+        } 
+      };
+      
+      const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
       if (mediaStream) {
-        // If successful, stop it and reload to let the main setupCamera take over with proper constraints
+        console.log("Permission granted manually!");
+        // If successful, stop it and reload to let the main setupCamera take over
         mediaStream.getTracks().forEach(track => track.stop());
         window.location.reload();
       }
@@ -389,8 +400,10 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
             </button>
           </div>
           
-          <div className="text-[8px] text-white/10 text-center uppercase tracking-widest">
+          <div className="text-[7px] text-white/10 text-center uppercase tracking-widest leading-relaxed px-4">
             Secure: {window.isSecureContext ? 'Yes' : 'No'} • Media: {!!navigator.mediaDevices ? 'Yes' : 'No'} • Stream: {!!stream ? 'Yes' : 'No'} • Iframe: {window.self !== window.top ? 'Yes' : 'No'}
+            <br />
+            UA: {navigator.userAgent.substring(0, 50)}...
           </div>
         </div>
       </main>
