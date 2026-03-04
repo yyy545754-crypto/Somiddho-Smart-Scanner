@@ -36,21 +36,40 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
       }
 
       try {
-        // Try back camera first
-        const constraints = {
-          video: { 
-            facingMode: { ideal: 'environment' },
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
+        // More robust constraint sets to try in order
+        const constraintSets = [
+          { 
+            video: { 
+              facingMode: { ideal: 'environment' },
+              width: { ideal: 1280 },
+              height: { ideal: 720 }
+            } 
+          },
+          { 
+            video: { 
+              facingMode: 'environment' 
+            } 
+          },
+          { 
+            video: true 
           }
-        };
-        
-        let mediaStream: MediaStream;
-        try {
-          mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-        } catch (err) {
-          console.warn("Back camera failed, trying any camera", err);
-          mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        ];
+
+        let mediaStream: MediaStream | null = null;
+        let lastError: any = null;
+
+        for (const constraints of constraintSets) {
+          try {
+            mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+            if (mediaStream) break;
+          } catch (err) {
+            lastError = err;
+            console.warn("Camera constraint failed, trying next set:", constraints, err);
+          }
+        }
+
+        if (!mediaStream) {
+          throw lastError || new Error("Requested device not found");
         }
 
         activeStream = mediaStream;
@@ -70,12 +89,24 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
         }
       } catch (err: any) {
         console.error("Camera setup error:", err);
-        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        const errorName = err.name || '';
+        const errorMessage = err.message || '';
+
+        if (errorName === 'NotAllowedError' || errorName === 'PermissionDeniedError') {
           setCameraError("Camera permission denied. Please allow camera access in your device settings.");
-        } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-          setCameraError("No camera found. If you are on a computer, make sure a webcam is connected.");
+        } else if (
+          errorName === 'NotFoundError' || 
+          errorName === 'DevicesNotFoundError' || 
+          errorMessage.includes('device not found') ||
+          errorMessage.includes('NotFoundError')
+        ) {
+          setCameraError("No camera found. Please ensure your camera is connected and not being used by another app.");
+        } else if (errorName === 'NotReadableError' || errorName === 'TrackStartError') {
+          setCameraError("Camera is already in use by another application or tab.");
+        } else if (errorName === 'OverconstrainedError') {
+          setCameraError("Camera does not support the requested resolution.");
         } else {
-          setCameraError(`Camera Error: ${err.message || "Unknown error"}`);
+          setCameraError(`Camera Error: ${errorMessage || "Unknown error"}`);
         }
       }
     }
