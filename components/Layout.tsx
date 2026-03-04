@@ -74,7 +74,7 @@ const NavItem: React.FC<NavItemProps> = ({ isActive, onClick, icon, label }) => 
     className={`flex flex-col items-center gap-1 transition-all ${isActive ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
   >
     <span className="material-icons-round text-2xl">{icon}</span>
-    <span className="text-[10px] font-bold uppercase tracking-tighter">{label}</span>
+    <span className="text-[13px] font-black uppercase tracking-tight">{label}</span>
   </button>
 );
 

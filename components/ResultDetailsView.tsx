@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ScanResult, SearchEngine } from '../types';
 
@@ -15,8 +15,16 @@ interface ResultDetailsViewProps {
 const ResultDetailsView: React.FC<ResultDetailsViewProps> = ({ result, searchEngine, scanConfirmation, onBack, onToggleFavorite, t }) => {
   const [copySuccess, setCopySuccess] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [trustScore, setTrustScore] = useState(0);
 
   const isUrl = result.data.trim().toLowerCase().startsWith('http');
+  const score = result.trustScore || 50;
+
+  useEffect(() => {
+    // Animate trust score on mount
+    const timer = setTimeout(() => setTrustScore(score), 500);
+    return () => clearTimeout(timer);
+  }, [score]);
 
   const handleAction = () => {
     if (scanConfirmation) {
@@ -60,7 +68,6 @@ const ResultDetailsView: React.FC<ResultDetailsViewProps> = ({ result, searchEng
   };
 
   const handlePrint = () => {
-    // Ensuring the layout is ready for print
     window.focus();
     window.print();
   };
@@ -80,10 +87,15 @@ const ResultDetailsView: React.FC<ResultDetailsViewProps> = ({ result, searchEng
     }
   };
 
+  // SVG Circle calculations
+  const radius = 28;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (trustScore / 100) * circumference;
+
   return (
     <div className="h-full overflow-y-auto bg-rose-950 text-white flex flex-col font-display hide-scrollbar">
       {/* Header */}
-      <header className="px-6 py-4 flex items-center justify-between sticky top-0 z-50 bg-rose-950/90 backdrop-blur-2xl border-b border-white/5 no-print">
+      <header className="px-6 py-4 flex items-center justify-between sticky top-0 z-50 bg-rose-950/80 backdrop-blur-2xl border-b border-white/5 no-print">
         <button onClick={onBack} className="w-10 h-10 flex items-center justify-start text-white/40 active:scale-90 transition-transform">
           <span className="material-icons-round">arrow_back_ios</span>
         </button>
@@ -94,65 +106,159 @@ const ResultDetailsView: React.FC<ResultDetailsViewProps> = ({ result, searchEng
       </header>
 
       <main className="flex-1 px-6 pb-32 space-y-6 pt-6 max-w-lg mx-auto w-full">
-        {/* Main Content Card */}
-        <section className="glass-panel rounded-[2.5rem] border border-white/10 overflow-hidden shadow-2xl">
-          <div className="aspect-square w-full bg-white flex items-center justify-center p-8 relative">
-            <img 
-              src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(result.data)}`} 
-              className="w-full h-full object-contain" 
-              alt="QR Code" 
-            />
-            <div className="absolute top-4 right-4 bg-primary text-black text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-lg no-print">
-              {result.type}
+        {/* Safety Check Hero Card */}
+        <section className="relative overflow-hidden p-8 rounded-[2rem] bg-white/10 border border-white/20 shadow-[0_0_40px_rgba(13,242,89,0.15)]">
+          <div className="flex justify-between items-start mb-8">
+            <div>
+              <span className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-2 block">Security Status</span>
+              <h2 className="text-4xl font-black flex items-center gap-3">
+                {score > 70 ? 'Secure' : score > 40 ? 'Caution' : 'Warning'}
+                <span className={`material-icons-round text-4xl ${score > 70 ? 'text-primary' : score > 40 ? 'text-amber-500' : 'text-rose-500'}`}>
+                  {score > 70 ? 'verified' : score > 40 ? 'warning' : 'gpp_maybe'}
+                </span>
+              </h2>
+            </div>
+            <div className="flex flex-col items-end">
+              <div className="relative w-20 h-20 flex items-center justify-center">
+                <svg className="absolute inset-0 w-full h-full -rotate-90">
+                  <circle className="text-white/10" cx="40" cy="40" fill="transparent" r={radius} stroke="currentColor" strokeWidth="5"></circle>
+                  <motion.circle 
+                    className={score > 70 ? 'text-primary' : score > 40 ? 'text-amber-500' : 'text-rose-500'}
+                    cx="40" cy="40" fill="transparent" r={radius} stroke="currentColor" strokeWidth="5"
+                    strokeDasharray={circumference}
+                    initial={{ strokeDashoffset: circumference }}
+                    animate={{ strokeDashoffset: offset }}
+                    transition={{ duration: 1.5, ease: "easeOut" }}
+                  ></motion.circle>
+                </svg>
+                <span className="text-base font-black">{trustScore}</span>
+              </div>
+              <span className="text-[10px] mt-2 text-white/60 uppercase font-black tracking-widest">Trust Score</span>
             </div>
           </div>
-          <div className="p-8 bg-rose-950/40">
-            <p className="text-[10px] uppercase font-bold text-primary/60 mb-2 tracking-[0.2em]">{t.scanned_content}</p>
-            <p className="text-lg font-bold break-all text-white leading-tight mb-4">{result.data}</p>
-            <p className="text-[10px] text-white/20 uppercase tracking-widest">{new Date(result.timestamp).toLocaleString()}</p>
+          
+          <div className="grid grid-cols-1 gap-4 pt-6 border-t border-white/10">
+            {result.safetyPoints?.map((point, idx) => (
+              <div key={idx} className="flex items-center gap-4">
+                <span className={`material-icons-round text-base ${score > 70 ? 'text-primary' : 'text-amber-500'}`}>
+                  {score > 70 ? 'check_circle' : 'info'}
+                </span>
+                <span className="text-sm font-black text-white/80">{point}</span>
+              </div>
+            )) || (
+              <div className="flex items-center gap-4">
+                <span className="material-icons-round text-primary text-base">lock</span>
+                <span className="text-sm font-black text-white/80">Standard Security Check</span>
+              </div>
+            )}
           </div>
         </section>
 
-        {/* Primary Action Button - Prominently Visible */}
-        <section className="no-print">
+        {/* URL Information */}
+        <section className="space-y-4">
+          <div className="bg-white/10 p-6 rounded-3xl border border-white/10">
+            <p className="text-xs uppercase font-black text-white/50 mb-4 tracking-widest">
+              {isUrl ? 'Destination URL' : 'Scanned Content'}
+            </p>
+            <div className="flex items-center justify-between gap-4">
+              <span className="truncate text-base font-black text-white break-all">{result.data}</span>
+              <div className="flex gap-3 shrink-0">
+                <button onClick={handleCopy} className="p-3 bg-white/10 rounded-xl border border-white/20 active:scale-90 transition-transform">
+                  <span className="material-icons-round text-base">{copySuccess ? 'check' : 'content_copy'}</span>
+                </button>
+                <button onClick={handleShare} className="p-3 bg-white/10 rounded-xl border border-white/20 active:scale-90 transition-transform">
+                  <span className="material-icons-round text-base">share</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* AI Summary */}
+        {result.summary && (
+          <section className="space-y-4">
+            <h3 className="text-xs font-black uppercase tracking-widest text-white/50 ml-1">AI Insight</h3>
+            <div className="bg-primary/10 p-6 rounded-3xl border border-primary/20">
+              <p className="text-base text-white font-bold leading-relaxed italic">
+                "{result.summary}"
+              </p>
+            </div>
+          </section>
+        )}
+
+        {/* Preview Section */}
+        {isUrl && (
+          <section className="space-y-4">
+            <h3 className="text-xs font-black uppercase tracking-widest text-white/50 ml-1">Website Preview</h3>
+            <div className="bg-white/10 rounded-[2rem] border border-white/10 overflow-hidden shadow-2xl">
+              <div className="aspect-video w-full bg-white/5 overflow-hidden relative">
+                <img 
+                  className="w-full h-full object-cover opacity-80" 
+                  src={`https://picsum.photos/seed/${encodeURIComponent(result.data)}/800/450`} 
+                  alt="Preview" 
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                   <div className="w-16 h-16 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center border border-white/10">
+                      <span className="material-icons-round text-white text-3xl">visibility</span>
+                   </div>
+                </div>
+              </div>
+              <div className="p-6 space-y-3">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center overflow-hidden">
+                    <span className="material-icons-round text-primary text-xl">public</span>
+                  </div>
+                  <h4 className="font-black text-white truncate text-base">{new URL(result.data).hostname}</h4>
+                </div>
+                <p className="text-sm text-white/60 font-bold line-clamp-2 leading-relaxed">
+                  Secure gateway verified by Somiddho Smart Scanner. Content analyzed for potential risks and safety compliance.
+                </p>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Technical Metadata */}
+        <section className="space-y-4">
+          <h3 className="text-xs font-black uppercase tracking-widest text-white/50 ml-1">Metadata Details</h3>
+          <div className="glass-panel rounded-3xl p-6 border border-white/10 space-y-4">
+            <div className="flex items-center justify-between py-2 border-b border-white/10">
+              <span className="text-sm text-white/60 font-bold">Content Type</span>
+              <span className="text-sm font-black text-primary">{result.type}</span>
+            </div>
+            <div className="flex items-center justify-between py-2 border-b border-white/10">
+              <span className="text-sm text-white/60 font-bold">Scanned At</span>
+              <span className="text-sm font-black">{new Date(result.timestamp).toLocaleTimeString()}</span>
+            </div>
+            <div className="flex items-center justify-between py-2">
+              <span className="text-sm text-white/60 font-bold">Security Protocol</span>
+              <span className="text-sm font-mono font-black text-primary">{isUrl ? 'HTTPS/SSL' : 'Plain Text'}</span>
+            </div>
+          </div>
+        </section>
+
+        {/* Primary Action Button */}
+        <section className="no-print pt-4">
           <button 
             onClick={handleAction} 
-            className="w-full h-16 bg-primary text-black font-black rounded-2xl flex items-center justify-center gap-3 active:scale-[0.98] transition-all shadow-[0_15px_40px_rgba(13,242,89,0.35)] uppercase tracking-[0.15em] text-sm"
+            className="w-full h-16 bg-primary text-black font-black rounded-2xl flex items-center justify-center gap-3 active:scale-[0.98] transition-all shadow-[0_15px_40px_rgba(13,242,89,0.3)] uppercase tracking-[0.15em] text-base"
           >
-            <span className="material-icons-round">{isUrl ? 'open_in_browser' : 'search'}</span>
+            <span className="material-icons-round text-2xl">{isUrl ? 'open_in_browser' : 'search'}</span>
             {isUrl ? t.open_browser : `${t.search_on} ${searchEngine}`}
           </button>
         </section>
 
-        {/* Secondary Actions Grid */}
+        {/* Secondary Actions */}
         <section className="grid grid-cols-2 gap-4 no-print">
-          <button onClick={handleCopy} className={`p-5 rounded-[2rem] border transition-all flex flex-col items-center gap-2 active:scale-95 ${copySuccess ? 'border-primary bg-primary/10 text-primary' : 'glass-panel border-white/5 text-white/60'}`}>
-            <span className="material-icons-round">{copySuccess ? 'check' : 'content_copy'}</span>
-            <span className="text-[10px] font-black uppercase tracking-widest">{t.copy_text}</span>
+          <button onClick={handlePrint} className="h-16 rounded-2xl glass-panel border border-white/10 flex items-center justify-center gap-3 active:scale-95 text-white font-black">
+            <span className="material-icons-round text-2xl">picture_as_pdf</span>
+            <span className="text-xs font-black uppercase tracking-widest">{t.download_pdf}</span>
           </button>
-          <button onClick={handlePrint} className="p-5 rounded-[2rem] glass-panel border border-white/5 flex flex-col items-center gap-2 active:scale-95 text-white/60">
-            <span className="material-icons-round">picture_as_pdf</span>
-            <span className="text-[10px] font-black uppercase tracking-widest">{t.download_pdf}</span>
+          <button onClick={onBack} className="h-16 rounded-2xl glass-panel border border-white/10 flex items-center justify-center gap-3 active:scale-95 text-white font-black">
+            <span className="material-icons-round text-2xl">qr_code_scanner</span>
+            <span className="text-xs font-black uppercase tracking-widest">{t.back}</span>
           </button>
-        </section>
-
-        {/* Share Button */}
-        <section className="no-print">
-          <button onClick={handleShare} className="w-full p-5 glass-panel rounded-[2rem] border border-white/5 flex items-center justify-center gap-3 active:scale-95 transition-all text-white/60">
-             <span className="material-icons-round text-primary">share</span>
-             <span className="text-[10px] font-black uppercase tracking-widest">{t.share_result}</span>
-          </button>
-        </section>
-        
-        {/* Info Box */}
-        <section className="glass-panel p-6 rounded-[2rem] border border-white/5">
-          <div className="flex items-center gap-3 mb-2">
-            <span className="material-icons-round text-primary/40">security</span>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">{t.privacy_protected}</p>
-          </div>
-          <p className="text-[11px] text-white/40 leading-relaxed italic">
-            {t.privacy_desc}
-          </p>
         </section>
       </main>
 

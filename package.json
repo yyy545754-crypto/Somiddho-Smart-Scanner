@@ -10,6 +10,8 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
+    "@google/genai": "^1.43.0",
+    "@types/node": "^25.3.3",
     "jsqr": "^1.4.0",
     "motion": "^12.34.4",
     "react": "^19.0.0",

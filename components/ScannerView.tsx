@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import jsQR from 'jsqr';
 import { ScanResult } from '../types';
+import { analyzeScannedContent } from '../services/geminiService';
 
 interface ScannerViewProps {
   onResult: (result: ScanResult) => void;
@@ -188,12 +189,15 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
     }
   };
 
-  const handleScanSuccess = (data: string, explicitImageData?: string) => {
+  const handleScanSuccess = async (data: string, explicitImageData?: string) => {
     if (isProcessing || scanPaused) return;
     setScanPaused(true);
     setIsProcessing(true);
     
     const imageData = explicitImageData || captureFrame();
+    
+    // Perform AI analysis
+    const analysis = await analyzeScannedContent(data, imageData || undefined);
     
     const result: ScanResult = {
       id: Date.now().toString(),
@@ -201,7 +205,10 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
       timestamp: Date.now(),
       type: data.startsWith('http') ? 'URL' : 'TEXT',
       imageUrl: imageData || undefined,
-      isFavorite: false
+      isFavorite: false,
+      trustScore: analysis.trustScore,
+      safetyPoints: analysis.safetyPoints,
+      summary: analysis.summary
     };
 
     onResult(result);
@@ -288,10 +295,10 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
           {cameraError ? (
             <div className="flex flex-col items-center justify-center h-full p-10 text-center">
               <span className="material-icons-round text-6xl text-white/10 mb-4">videocam_off</span>
-              <p className="text-white/30 text-xs font-medium uppercase tracking-widest mb-6 max-w-xs mx-auto leading-relaxed">{cameraError}</p>
+              <p className="text-white/80 text-base font-bold uppercase tracking-widest mb-6 max-w-xs mx-auto leading-relaxed">{cameraError}</p>
               
               {(cameraError.includes('permission') || cameraError.includes('অনুমতি')) && (
-                <p className="text-amber-500/60 text-[9px] mb-6 max-w-xs mx-auto">
+                <p className="text-amber-500 text-sm font-bold mb-6 max-w-xs mx-auto">
                   If you are using an app like Appilix, please ensure the app itself has camera permissions in your phone settings.
                 </p>
               )}
@@ -300,14 +307,14 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
                 {(cameraError.includes('permission') || cameraError.includes('অনুমতি')) ? (
                   <button 
                     onClick={requestPermission}
-                    className="bg-primary text-black px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl active:scale-95 transition-transform"
+                    className="bg-primary text-black px-6 py-4 rounded-2xl font-black uppercase tracking-widest text-sm shadow-2xl active:scale-95 transition-transform"
                   >
                     {t.grant_permission}
                   </button>
                 ) : (
                   <button 
                     onClick={retryCamera}
-                    className="bg-primary text-black px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl active:scale-95 transition-transform"
+                    className="bg-primary text-black px-6 py-4 rounded-2xl font-black uppercase tracking-widest text-sm shadow-2xl active:scale-95 transition-transform"
                   >
                     {t.retry_camera}
                   </button>
@@ -332,23 +339,23 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
                   <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4 animate-pulse">
                     <span className="material-icons-round text-primary text-3xl">play_arrow</span>
                   </div>
-                  <p className="text-white font-bold uppercase tracking-widest text-[10px]">{t.tap_to_start || "Tap to Start Camera"}</p>
+                  <p className="text-white font-black uppercase tracking-widest text-sm">{t.tap_to_start || "Tap to Start Camera"}</p>
                 </div>
               )}
             </>
           )}
           <canvas ref={canvasRef} className="hidden" />
-          <div className="absolute inset-0 bg-rose-950/40"></div>
+          <div className="absolute inset-0 bg-rose-950/20"></div>
         </div>
 
       <header className="relative z-10 px-6 py-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-[0_0_20px_rgba(13,242,89,0.3)]">
-            <span className="material-icons-round text-black text-xl">qr_code_scanner</span>
+          <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-[0_0_20px_rgba(13,242,89,0.3)]">
+            <span className="material-icons-round text-black text-2xl">qr_code_scanner</span>
           </div>
           <div>
-            <h1 className="text-lg font-bold leading-none">Somiddho</h1>
-            <p className="text-[9px] uppercase tracking-[0.2em] text-primary font-bold mt-1">{t.scanner}</p>
+            <h1 className="text-xl font-black leading-none">Somiddho</h1>
+            <p className="text-xs uppercase tracking-[0.2em] text-primary font-black mt-1">{t.scanner}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -375,10 +382,10 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
           <div className="hud-corner bottom-0 right-0 border-b-2 border-r-2 rounded-br-lg"></div>
         </div>
         
-        <p className="mt-8 text-white/40 text-[10px] font-medium uppercase tracking-[0.2em]">{t.position_qr}</p>
+        <p className="mt-8 text-white/80 text-xs font-black uppercase tracking-[0.2em]">{t.position_qr}</p>
 
         {showToast && (
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-black px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl animate-in zoom-in-95 fade-in duration-300 z-50">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-black px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm shadow-2xl animate-in zoom-in-95 fade-in duration-300 z-50">
             {isAutoCopy ? t.saved_copied : t.scan_saved}
           </div>
         )}
@@ -387,20 +394,20 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
           <div className="flex gap-4">
             <button 
               onClick={handleGalleryClick}
-              className="flex-1 h-14 glass-panel rounded-2xl flex items-center justify-center gap-2 text-white/60 hover:text-white transition-all active:scale-95 border-white/5"
+              className="flex-1 h-16 glass-panel rounded-2xl flex items-center justify-center gap-3 text-white font-black transition-all active:scale-95 border-white/10"
             >
-              <span className="material-icons-round text-xl">photo_library</span>
-              <span className="text-[10px] font-bold uppercase tracking-widest">{t.gallery}</span>
+              <span className="material-icons-round text-2xl">photo_library</span>
+              <span className="text-xs font-black uppercase tracking-widest">{t.gallery}</span>
             </button>
             <button 
               onClick={() => onViewHistory && onViewHistory()}
-              className="w-14 h-14 glass-panel rounded-2xl flex items-center justify-center text-white/60 active:scale-95 border-white/5"
+              className="w-16 h-16 glass-panel rounded-2xl flex items-center justify-center text-white active:scale-95 border-white/10"
             >
-              <span className="material-icons-round text-xl">history</span>
+              <span className="material-icons-round text-2xl">history</span>
             </button>
           </div>
           
-          <div className="text-[7px] text-white/10 text-center uppercase tracking-widest leading-relaxed px-4">
+          <div className="text-[10px] text-white/40 text-center uppercase tracking-widest font-bold leading-relaxed px-4">
             Secure: {window.isSecureContext ? 'Yes' : 'No'} • Media: {!!navigator.mediaDevices ? 'Yes' : 'No'} • Stream: {!!stream ? 'Yes' : 'No'} • Iframe: {window.self !== window.top ? 'Yes' : 'No'}
             <br />
             UA: {navigator.userAgent.substring(0, 50)}...
@@ -422,10 +429,10 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[9px] text-primary font-black uppercase tracking-widest">{t.last_scan_found}</p>
-              <p className="text-xs font-bold text-white/80 truncate mt-0.5">{lastScan.data}</p>
+              <p className="text-xs text-primary font-black uppercase tracking-widest">{t.last_scan_found}</p>
+              <p className="text-sm font-bold text-white truncate mt-0.5">{lastScan.data}</p>
             </div>
-            <span className="material-icons-round text-white/20">chevron_right</span>
+            <span className="material-icons-round text-white/40">chevron_right</span>
           </button>
         </footer>
       )}

@@ -73,8 +73,8 @@ const SettingsView: React.FC<SettingsViewProps> = ({
       <div className="space-y-8">
         {/* Scanning Section */}
         <section>
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mb-4 px-1">{t.scanner}</h2>
-          <div className="glass-panel rounded-3xl divide-y divide-white/5">
+          <h2 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 mb-4 px-1">{t.scanner}</h2>
+          <div className="glass-panel rounded-3xl divide-y divide-white/10">
             <ToggleItem 
               icon="vibration" 
               label={t.vibrate} 
@@ -122,7 +122,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
 
         {/* Security Section */}
         <section>
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mb-4 px-1">{t.security}</h2>
+          <h2 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 mb-4 px-1">{t.security}</h2>
           <div className="glass-panel rounded-3xl">
             <ToggleItem 
               icon="lock" 
@@ -136,15 +136,15 @@ const SettingsView: React.FC<SettingsViewProps> = ({
 
         {/* Appearance Section */}
         <section>
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mb-4 px-1">{t.appearance}</h2>
-          <div className="glass-panel rounded-3xl p-5">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-10 h-10 rounded-2xl bg-primary/20 flex items-center justify-center text-primary">
-                <span className="material-icons-round">palette</span>
+          <h2 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 mb-4 px-1">{t.appearance}</h2>
+          <div className="glass-panel rounded-3xl p-6">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary">
+                <span className="material-icons-round text-2xl">palette</span>
               </div>
               <div>
-                <p className="text-sm font-semibold text-white">{t.theme_accent}</p>
-                <p className="text-xs text-white/40">Select app accent color</p>
+                <p className="text-lg font-black text-white">{t.theme_accent}</p>
+                <p className="text-sm text-white/60 font-bold">Select app accent color</p>
               </div>
             </div>
             <div className="flex justify-between items-center gap-2">
@@ -162,13 +162,13 @@ const SettingsView: React.FC<SettingsViewProps> = ({
 
         {/* Language Section */}
         <section>
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mb-4 px-1">{t.language}</h2>
-          <div className="glass-panel rounded-3xl p-2 grid grid-cols-2 gap-1">
+          <h2 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 mb-4 px-1">{t.language}</h2>
+          <div className="glass-panel rounded-3xl p-2 grid grid-cols-2 gap-2">
             {[Language.EN, Language.BN, Language.JP, Language.KR, Language.RU].map((lang) => (
               <button
                 key={lang}
                 onClick={() => setLanguage(lang)}
-                className={`py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all ${language === lang ? 'bg-primary text-black shadow-lg' : 'text-white/40 hover:text-white/60'}`}
+                className={`py-4 rounded-2xl text-sm font-black uppercase tracking-widest transition-all ${language === lang ? 'bg-primary text-black shadow-lg' : 'text-white/60 hover:text-white'}`}
               >
                 {lang}
               </button>
@@ -178,13 +178,13 @@ const SettingsView: React.FC<SettingsViewProps> = ({
 
         {/* Search Engine Section */}
         <section>
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mb-4 px-1">{t.search_engine}</h2>
-          <div className="glass-panel rounded-3xl p-2 flex gap-1">
+          <h2 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 mb-4 px-1">{t.search_engine}</h2>
+          <div className="glass-panel rounded-3xl p-2 flex gap-2">
             {[SearchEngine.GOOGLE, SearchEngine.BING, SearchEngine.DUCKDUCKGO].map((engine) => (
               <button
                 key={engine}
                 onClick={() => setSearchEngine(engine)}
-                className={`flex-1 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all ${searchEngine === engine ? 'bg-primary text-black shadow-lg' : 'text-white/40 hover:text-white/60'}`}
+                className={`flex-1 py-4 rounded-2xl text-sm font-black uppercase tracking-widest transition-all ${searchEngine === engine ? 'bg-primary text-black shadow-lg' : 'text-white/60 hover:text-white'}`}
               >
                 {engine}
               </button>
@@ -194,93 +194,93 @@ const SettingsView: React.FC<SettingsViewProps> = ({
 
         {/* Favorites Section */}
         <section>
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mb-4 px-1">{t.favorites}</h2>
+          <h2 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 mb-4 px-1">{t.favorites}</h2>
           <div className="glass-panel rounded-3xl overflow-hidden">
             <button 
               onClick={onViewFavorites}
-              className="w-full flex items-center justify-between p-5 hover:bg-white/5 transition-colors text-left"
+              className="w-full flex items-center justify-between p-6 hover:bg-white/5 transition-colors text-left"
             >
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                  <span className="material-icons-round">star</span>
+                <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary">
+                  <span className="material-icons-round text-2xl">star</span>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-white">{t.favorites}</p>
-                  <p className="text-xs text-white/40">View your starred items</p>
+                  <p className="text-lg font-black text-white">{t.favorites}</p>
+                  <p className="text-sm text-white/60 font-bold">View your starred items</p>
                 </div>
               </div>
-              <span className="material-icons-round text-white/10">chevron_right</span>
+              <span className="material-icons-round text-white/40">chevron_right</span>
             </button>
           </div>
         </section>
 
         {/* Social & Sharing Section */}
         <section>
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mb-4 px-1">Spread the word</h2>
+          <h2 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 mb-4 px-1">Spread the word</h2>
           <div className="glass-panel rounded-3xl overflow-hidden">
             <button 
               onClick={handleShareApp}
-              className="w-full flex items-center justify-between p-5 hover:bg-white/5 transition-colors text-left"
+              className="w-full flex items-center justify-between p-6 hover:bg-white/5 transition-colors text-left"
             >
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                  <span className="material-icons-round">share</span>
+                <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary">
+                  <span className="material-icons-round text-2xl">share</span>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-white">{t.share_app}</p>
-                  <p className="text-xs text-white/40">{t.share_app_desc}</p>
+                  <p className="text-lg font-black text-white">{t.share_app}</p>
+                  <p className="text-sm text-white/60 font-bold">{t.share_app_desc}</p>
                 </div>
               </div>
-              <span className="material-icons-round text-white/10">chevron_right</span>
+              <span className="material-icons-round text-white/40">chevron_right</span>
             </button>
           </div>
         </section>
 
         {/* Legal Section */}
         <section>
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mb-4 px-1">Legal & Support</h2>
-          <div className="glass-panel rounded-3xl divide-y divide-white/5">
-            <button onClick={onOpenPrivacy} className="w-full flex items-center justify-between p-5 hover:bg-white/5 transition-colors text-left">
+          <h2 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 mb-4 px-1">Legal & Support</h2>
+          <div className="glass-panel rounded-3xl divide-y divide-white/10">
+            <button onClick={onOpenPrivacy} className="w-full flex items-center justify-between p-6 hover:bg-white/5 transition-colors text-left">
               <div className="flex items-center gap-4">
-                <span className="material-icons-round text-white/30">verified_user</span>
-                <span className="text-sm font-semibold text-white">{t.privacy_policy}</span>
+                <span className="material-icons-round text-white/60 text-2xl">verified_user</span>
+                <span className="text-lg font-black text-white">{t.privacy_policy}</span>
               </div>
-              <span className="material-icons-round text-white/10">chevron_right</span>
+              <span className="material-icons-round text-white/40">chevron_right</span>
             </button>
-            <button onClick={onOpenTerms} className="w-full flex items-center justify-between p-5 hover:bg-white/5 transition-colors text-left">
+            <button onClick={onOpenTerms} className="w-full flex items-center justify-between p-6 hover:bg-white/5 transition-colors text-left">
               <div className="flex items-center gap-4">
-                <span className="material-icons-round text-white/30">description</span>
-                <span className="text-sm font-semibold text-white">{t.terms_conditions}</span>
+                <span className="material-icons-round text-white/60 text-2xl">description</span>
+                <span className="text-lg font-black text-white">{t.terms_conditions}</span>
               </div>
-              <span className="material-icons-round text-white/10">chevron_right</span>
+              <span className="material-icons-round text-white/40">chevron_right</span>
             </button>
           </div>
         </section>
 
         {/* Data Section */}
         <section>
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mb-4 px-1">App Data</h2>
+          <h2 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 mb-4 px-1">App Data</h2>
           <button 
             onClick={onReset}
-            className="w-full glass-panel rounded-3xl p-5 flex items-center justify-between group hover:bg-red-500/10 transition-colors"
+            className="w-full glass-panel rounded-3xl p-6 flex items-center justify-between group hover:bg-red-500/10 transition-colors"
           >
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-2xl bg-red-500/10 flex items-center justify-center text-red-500 group-hover:bg-red-500 group-hover:text-white transition-all">
-                <span className="material-icons-round">restart_alt</span>
+              <div className="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center text-red-500 group-hover:bg-red-500 group-hover:text-white transition-all">
+                <span className="material-icons-round text-2xl">restart_alt</span>
               </div>
               <div className="text-left">
-                <p className="text-sm font-semibold text-red-500">{t.reset_data}</p>
-                <p className="text-xs text-white/30">Clear all scans and settings</p>
+                <p className="text-lg font-black text-red-500">{t.reset_data}</p>
+                <p className="text-sm text-white/60 font-bold">Clear all scans and settings</p>
               </div>
             </div>
-            <span className="material-icons-round text-white/10 group-hover:text-red-500/50">chevron_right</span>
+            <span className="material-icons-round text-white/40 group-hover:text-red-500/50">chevron_right</span>
           </button>
         </section>
 
         {/* System Info */}
         <section className="text-center pt-8">
-          <p className="text-xs font-bold text-white/10 uppercase tracking-widest">Somiddho Pro v3.5</p>
-          <p className="text-[9px] text-white/5 mt-1">Built with Privacy in Mind</p>
+          <p className="text-sm font-black text-white/20 uppercase tracking-widest">Somiddho Pro v3.5</p>
+          <p className="text-[10px] text-white/10 mt-1 font-bold">Built with Privacy in Mind</p>
         </section>
       </div>
     </div>
@@ -296,21 +296,21 @@ interface ToggleItemProps {
 }
 
 const ToggleItem: React.FC<ToggleItemProps> = ({ icon, label, desc, active, onToggle }) => (
-  <div className="flex items-center justify-between p-5">
+  <div className="flex items-center justify-between p-6">
     <div className="flex items-center gap-4">
-      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-colors ${active ? 'bg-primary/20 text-primary' : 'bg-white/5 text-white/30'}`}>
-        <span className="material-icons-round">{icon}</span>
+      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${active ? 'bg-primary/20 text-primary' : 'bg-white/5 text-white/60'}`}>
+        <span className="material-icons-round text-2xl">{icon}</span>
       </div>
       <div>
-        <p className="text-sm font-semibold text-white">{label}</p>
-        <p className="text-xs text-white/40">{desc}</p>
+        <p className="text-lg font-black text-white">{label}</p>
+        <p className="text-sm text-white/60 font-bold">{desc}</p>
       </div>
     </div>
     <button 
       onClick={onToggle}
-      className={`relative inline-flex items-center h-6 w-11 rounded-full transition-all ${active ? 'bg-primary' : 'bg-white/10'}`}
+      className={`relative inline-flex items-center h-7 w-12 rounded-full transition-all ${active ? 'bg-primary' : 'bg-white/20'}`}
     >
-      <span className={`inline-block w-4 h-4 transform bg-white rounded-full shadow-md transition-transform ${active ? 'translate-x-6' : 'translate-x-1'}`} />
+      <span className={`inline-block w-5 h-5 transform bg-white rounded-full shadow-md transition-transform ${active ? 'translate-x-6' : 'translate-x-1'}`} />
     </button>
   </div>
 );

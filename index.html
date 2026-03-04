@@ -15,27 +15,59 @@
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3126/3126504.png">
 
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0df259',
+            secondary: '#f43f5e',
+            background: {
+              dark: '#1a0209',
+              card: '#2d030f'
+            }
+          },
+          fontFamily: {
+            display: ['Space Grotesk', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
   
   <style>
     :root {
-      --primary-color: #f43f5e;
+      --primary-color: #0df259;
     }
     body {
       font-family: 'Space Grotesk', sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #4c0519;
-      color: white;
+      background-color: #1a0209; 
+      color: #ffffff;
       overflow-x: hidden;
+      font-size: 17px; /* Slightly larger base font */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     .glass-panel {
-      background: rgba(76, 5, 25, 0.7);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(45, 3, 15, 0.7); 
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    h1, h2, h3, h4 {
+      letter-spacing: -0.02em;
+      font-weight: 700;
+    }
+
+    .text-primary {
+      color: var(--primary-color) !important;
     }
     .hud-corner {
       width: 24px;

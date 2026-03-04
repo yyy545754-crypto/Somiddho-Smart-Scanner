@@ -147,10 +147,10 @@ const SecurityLock: React.FC<SecurityLockProps> = ({
               {step === 'enter' ? 'lock' : 'lock_open'}
             </span>
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2">
+          <h2 className="text-3xl font-black text-white mb-3">
             {step === 'enter' ? t.enter_pin : step === 'setup' ? t.setup_pin : t.confirm_pin}
           </h2>
-          <p className="text-white/40 text-sm">
+          <p className="text-white/60 text-base font-bold">
             {step === 'enter' ? t.app_lock_desc : 'Set a 4-digit PIN to secure your app'}
           </p>
         </motion.div>
@@ -167,33 +167,33 @@ const SecurityLock: React.FC<SecurityLockProps> = ({
           </motion.p>
         )}
 
-        <div className="grid grid-cols-3 gap-4 w-full">
+        <div className="grid grid-cols-3 gap-6 w-full">
           {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((num) => (
             <button
               key={num}
               onClick={() => handleNumberClick(num)}
-              className="w-16 h-16 rounded-2xl bg-white/5 text-white text-xl font-bold flex items-center justify-center hover:bg-white/10 active:scale-95 transition-all mx-auto"
+              className="w-20 h-20 rounded-3xl bg-white/10 text-white text-2xl font-black flex items-center justify-center hover:bg-white/20 active:scale-95 transition-all mx-auto border border-white/10"
             >
               {num}
             </button>
           ))}
           <button
             onClick={handleBiometric}
-            className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 active:scale-95 transition-all mx-auto"
+            className="w-20 h-20 rounded-3xl bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 active:scale-95 transition-all mx-auto border border-primary/20"
           >
-            <span className="material-icons-round">fingerprint</span>
+            <span className="material-icons-round text-3xl">fingerprint</span>
           </button>
           <button
             onClick={() => handleNumberClick('0')}
-            className="w-16 h-16 rounded-2xl bg-white/5 text-white text-xl font-bold flex items-center justify-center hover:bg-white/10 active:scale-95 transition-all mx-auto"
+            className="w-20 h-20 rounded-3xl bg-white/10 text-white text-2xl font-black flex items-center justify-center hover:bg-white/20 active:scale-95 transition-all mx-auto border border-white/10"
           >
             0
           </button>
           <button
             onClick={handleBackspace}
-            className="w-16 h-16 rounded-2xl bg-white/5 text-white/40 flex items-center justify-center hover:bg-white/10 active:scale-95 transition-all mx-auto"
+            className="w-20 h-20 rounded-3xl bg-white/10 text-white/60 flex items-center justify-center hover:bg-white/20 active:scale-95 transition-all mx-auto border border-white/10"
           >
-            <span className="material-icons-round">backspace</span>
+            <span className="material-icons-round text-3xl">backspace</span>
           </button>
         </div>
 
@@ -201,7 +201,7 @@ const SecurityLock: React.FC<SecurityLockProps> = ({
           {step === 'setup' && pin.length === 4 && (
             <button
               onClick={handleNext}
-              className="w-full py-4 bg-primary text-black font-bold rounded-2xl shadow-lg active:scale-95 transition-all"
+              className="w-full py-5 bg-primary text-black font-black rounded-2xl shadow-lg active:scale-95 transition-all uppercase tracking-widest text-base"
             >
               Next
             </button>
@@ -210,7 +210,7 @@ const SecurityLock: React.FC<SecurityLockProps> = ({
           {(isSettingUp || onCancelSetup) && (
             <button
               onClick={onCancelSetup}
-              className="w-full py-4 text-white/40 font-bold rounded-2xl hover:text-white transition-all"
+              className="w-full py-5 text-white/60 font-black rounded-2xl hover:text-white transition-all uppercase tracking-widest text-base"
             >
               {t.back}
             </button>
@@ -224,7 +224,7 @@ const SecurityLock: React.FC<SecurityLockProps> = ({
                   window.location.reload();
                 }
               }}
-              className="text-[10px] text-white/20 uppercase tracking-widest hover:text-red-500 transition-colors mt-4"
+              className="text-xs text-white/40 uppercase font-black tracking-widest hover:text-red-500 transition-colors mt-6"
             >
               {t.reset_data}
             </button>

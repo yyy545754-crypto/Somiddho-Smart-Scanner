@@ -40,6 +40,9 @@ export interface ScanResult {
   type: string;
   imageUrl?: string;
   isFavorite?: boolean;
+  trustScore?: number;
+  safetyPoints?: string[];
+  summary?: string;
 }
 
 export interface QRConfig {

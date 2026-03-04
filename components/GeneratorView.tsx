@@ -104,7 +104,7 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ t }) => {
 
       {/* Type Selector */}
       <section className="mb-8">
-        <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mb-4 px-1">{t.select_type}</h2>
+        <h2 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 mb-4 px-1">{t.select_type}</h2>
         <div className="flex gap-3 overflow-x-auto hide-scrollbar -mx-6 px-6">
           {types.map((t) => (
             <div key={t.id} className="flex-shrink-0 flex flex-col items-center gap-2">
@@ -114,7 +114,7 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ t }) => {
               >
                 <span className="material-icons-round text-3xl">{t.icon}</span>
               </button>
-              <span className={`text-[10px] font-bold uppercase tracking-tighter ${type === t.id ? 'text-primary' : 'text-white/30'}`}>{t.label}</span>
+              <span className={`text-[11px] font-black uppercase tracking-tighter ${type === t.id ? 'text-primary' : 'text-white/40'}`}>{t.label}</span>
             </div>
           ))}
         </div>
@@ -122,8 +122,8 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ t }) => {
 
       {/* Dynamic Input Fields */}
       <section className="mb-8">
-        <div className="glass-panel rounded-3xl p-6 border border-white/5">
-          <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mb-4">{t.content_input}</label>
+        <div className="glass-panel rounded-3xl p-6 border border-white/10">
+          <label className="block text-xs font-black uppercase tracking-[0.2em] text-white/50 mb-4">{t.content_input}</label>
           
           <div className="space-y-4">
             {type === QRType.WIFI && (
@@ -131,13 +131,13 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ t }) => {
                 <InputField label="Network Name (SSID)" placeholder="Home WiFi" value={ssid} onChange={setSsid} />
                 <InputField label="Password" placeholder="••••••••" type="password" value={password} onChange={setPassword} />
                 <div>
-                  <label className="text-[9px] font-bold text-white/20 uppercase tracking-widest mb-2 block">Security</label>
+                  <label className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-2 block">Security</label>
                   <div className="flex gap-2">
                     {['WPA', 'WEP', 'nopass'].map(enc => (
                       <button 
                         key={enc}
                         onClick={() => setEncryption(enc)}
-                        className={`flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${encryption === enc ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-white/5 text-white/30 border border-transparent'}`}
+                        className={`flex-1 py-3 rounded-lg text-[10px] font-black uppercase transition-all ${encryption === enc ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-white/5 text-white/40 border border-transparent'}`}
                       >
                         {enc === 'nopass' ? 'None' : enc}
                       </button>
@@ -177,18 +177,18 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ t }) => {
               </>
             )}
           </div>
-          <p className="mt-4 text-[9px] text-white/20 italic text-center">Auto-formatted for best compatibility.</p>
+          <p className="mt-4 text-[10px] text-white/40 italic text-center font-bold">Auto-formatted for best compatibility.</p>
         </div>
       </section>
 
       {/* Customization & Generate */}
       <section className="space-y-6">
-        <div className="glass-panel rounded-3xl p-5 flex items-center justify-between border border-white/5">
+        <div className="glass-panel rounded-3xl p-6 flex items-center justify-between border border-white/10">
           <div className="flex items-center gap-3">
              <span className="material-icons-round text-primary text-2xl">palette</span>
              <div>
-                <p className="text-xs font-bold text-white leading-none">{t.qr_color}</p>
-                <p className="text-[9px] text-white/30 uppercase mt-1 tracking-widest">{color}</p>
+                <p className="text-sm font-black text-white leading-none">{t.qr_color}</p>
+                <p className="text-[10px] text-white/50 uppercase mt-1 tracking-widest font-bold">{color}</p>
              </div>
           </div>
           <div className="flex gap-1.5">
@@ -226,12 +226,12 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ t }) => {
             <div className="flex gap-3 w-full mt-8">
               <button 
                 onClick={handleSaveImage}
-                className="flex-1 bg-white/5 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white/60 hover:bg-white/10 hover:text-white transition-all"
+                className="flex-1 bg-white/10 py-4 rounded-2xl text-xs font-black uppercase tracking-widest text-white hover:bg-white/20 transition-all"
               >
                 {t.download}
               </button>
               <button 
-                className="flex-1 bg-primary py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-black shadow-lg shadow-primary/20 active:scale-95 transition-all"
+                className="flex-1 bg-primary py-4 rounded-2xl text-xs font-black uppercase tracking-widest text-black shadow-lg shadow-primary/20 active:scale-95 transition-all"
                 onClick={async () => {
                   if (navigator.share) {
                     try { await navigator.share({ title: 'QR Code', url: generatedUrl }); } catch (e) {}
@@ -251,13 +251,13 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ t }) => {
 };
 
 const InputField = ({ label, placeholder, value, onChange, type = 'text', prefix }: any) => (
-  <div className="space-y-1.5">
-    <label className="text-[9px] font-bold text-white/20 uppercase tracking-widest block ml-1">{label}</label>
+  <div className="space-y-2">
+    <label className="text-[11px] font-black text-white/40 uppercase tracking-widest block ml-1">{label}</label>
     <div className="relative">
-      {prefix && <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/60 text-xs font-bold">{prefix}</span>}
+      {prefix && <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/80 text-base font-black">{prefix}</span>}
       <input 
         type={type}
-        className={`w-full bg-white/5 border border-white/10 rounded-xl py-3.5 pr-4 focus:ring-1 focus:ring-primary text-white placeholder-white/10 outline-none text-sm transition-all ${prefix ? 'pl-16' : 'pl-4'}`}
+        className={`w-full bg-white/5 border border-white/20 rounded-xl py-4 pr-4 focus:ring-2 focus:ring-primary text-white placeholder-white/20 outline-none text-lg transition-all ${prefix ? 'pl-20' : 'pl-4'}`}
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
