@@ -31,7 +31,7 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
       setCameraError(null);
       
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        setCameraError("Your browser or app does not support camera access.");
+        setCameraError(t.camera_not_supported);
         return;
       }
 
@@ -93,20 +93,20 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
         const errorMessage = err.message || '';
 
         if (errorName === 'NotAllowedError' || errorName === 'PermissionDeniedError') {
-          setCameraError("Camera permission denied. Please allow camera access in your device settings.");
+          setCameraError(t.camera_permission_denied);
         } else if (
           errorName === 'NotFoundError' || 
           errorName === 'DevicesNotFoundError' || 
           errorMessage.includes('device not found') ||
           errorMessage.includes('NotFoundError')
         ) {
-          setCameraError("No camera found. Please ensure your camera is connected and not being used by another app.");
+          setCameraError(t.camera_not_found);
         } else if (errorName === 'NotReadableError' || errorName === 'TrackStartError') {
-          setCameraError("Camera is already in use by another application or tab.");
+          setCameraError(t.camera_in_use);
         } else if (errorName === 'OverconstrainedError') {
           setCameraError("Camera does not support the requested resolution.");
         } else {
-          setCameraError(`Camera Error: ${errorMessage || "Unknown error"}`);
+          setCameraError(`${t.camera_error}: ${errorMessage || "Unknown error"}`);
         }
       }
     }
@@ -118,10 +118,28 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
         activeStream.getTracks().forEach(track => track.stop());
       }
     };
-  }, []);
+  }, [t]);
 
   const retryCamera = () => {
     window.location.reload();
+  };
+
+  const requestPermission = async () => {
+    try {
+      setCameraError(null);
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop());
+        window.location.reload();
+      }
+    } catch (err: any) {
+      console.error("Manual permission request failed:", err);
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        setCameraError(t.camera_permission_denied);
+      } else {
+        setCameraError(`${t.camera_error}: ${err.message}`);
+      }
+    }
   };
 
   const handleVideoClick = () => {
@@ -230,13 +248,24 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
         {cameraError ? (
           <div className="flex flex-col items-center justify-center h-full p-10 text-center">
             <span className="material-icons-round text-6xl text-white/10 mb-4">videocam_off</span>
-            <p className="text-white/30 text-xs font-medium uppercase tracking-widest mb-6">{cameraError}</p>
-            <button 
-              onClick={retryCamera}
-              className="bg-primary text-black px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl active:scale-95 transition-transform"
-            >
-              Retry Camera
-            </button>
+            <p className="text-white/30 text-xs font-medium uppercase tracking-widest mb-6 max-w-xs mx-auto leading-relaxed">{cameraError}</p>
+            <div className="flex flex-col gap-3 w-full max-w-[200px]">
+              {(cameraError.includes('permission') || cameraError.includes('অনুমতি')) ? (
+                <button 
+                  onClick={requestPermission}
+                  className="bg-primary text-black px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl active:scale-95 transition-transform"
+                >
+                  {t.grant_permission}
+                </button>
+              ) : (
+                <button 
+                  onClick={retryCamera}
+                  className="bg-primary text-black px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl active:scale-95 transition-transform"
+                >
+                  {t.retry_camera}
+                </button>
+              )}
+            </div>
           </div>
         ) : (
           <video 

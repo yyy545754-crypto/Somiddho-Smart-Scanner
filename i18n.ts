@@ -63,7 +63,14 @@ export const translations: Record<Language, any> = {
     cancel: 'Cancel',
     confirm: 'Confirm',
     scan_confirmation: 'Scan Confirmation',
-    scan_confirmation_desc: 'Confirm before opening links'
+    scan_confirmation_desc: 'Confirm before opening links',
+    camera_permission_denied: 'Camera permission is required to scan QR codes. Please grant permission in your device settings.',
+    camera_not_found: 'No camera found. Please ensure your camera is connected and not being used by another app.',
+    camera_in_use: 'Camera is already in use by another application.',
+    camera_error: 'Camera Error',
+    camera_not_supported: 'Your browser or app does not support camera access.',
+    grant_permission: 'Grant Permission',
+    retry_camera: 'Retry Camera'
   },
   [Language.BN]: {
     scanner: 'স্ক্যানার',
@@ -126,7 +133,14 @@ export const translations: Record<Language, any> = {
     cancel: 'বাতিল',
     confirm: 'নিশ্চিত করুন',
     scan_confirmation: 'স্ক্যান কনফার্মেশন',
-    scan_confirmation_desc: 'লিঙ্ক ওপেন করার আগে নিশ্চিত করুন'
+    scan_confirmation_desc: 'লিঙ্ক ওপেন করার আগে নিশ্চিত করুন',
+    camera_permission_denied: 'কিউআর কোড স্ক্যান করার জন্য ক্যামেরার অনুমতি প্রয়োজন। দয়া করে আপনার ডিভাইস সেটিংসে অনুমতি দিন।',
+    camera_not_found: 'কোনো ক্যামেরা পাওয়া যায়নি। দয়া করে নিশ্চিত করুন আপনার ক্যামেরাটি অন্য কোনো অ্যাপে চালু নেই।',
+    camera_in_use: 'ক্যামেরাটি অন্য একটি অ্যাপ্লিকেশনে ব্যবহার করা হচ্ছে।',
+    camera_error: 'ক্যামেরা এরর',
+    camera_not_supported: 'আপনার ব্রাউজার বা অ্যাপটি ক্যামেরা সাপোর্ট করে না।',
+    grant_permission: 'অনুমতি দিন',
+    retry_camera: 'পুনরায় চেষ্টা করুন'
   },
   [Language.JP]: {
     scanner: 'スキャナー',
