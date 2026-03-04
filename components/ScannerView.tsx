@@ -30,10 +30,11 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
     let activeStream: MediaStream | null = null;
 
     async function setupCamera() {
+      console.log("Setting up camera...");
       setCameraError(null);
       
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        setCameraError(t.camera_not_supported);
+        setCameraError(`${t.camera_not_supported} (Secure context: ${window.isSecureContext ? 'Yes' : 'No'})`);
         return;
       }
 
@@ -145,22 +146,29 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
   const requestPermission = async () => {
     try {
       setCameraError(null);
+      // Try to get any video stream to trigger the browser permission dialog
       const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
       if (mediaStream) {
+        // If successful, stop it and reload to let the main setupCamera take over with proper constraints
         mediaStream.getTracks().forEach(track => track.stop());
         window.location.reload();
       }
     } catch (err: any) {
       console.error("Manual permission request failed:", err);
-      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+      const errorName = err.name || '';
+      if (errorName === 'NotAllowedError' || errorName === 'PermissionDeniedError') {
         setCameraError(t.camera_permission_denied);
       } else {
-        setCameraError(`${t.camera_error}: ${err.message}`);
+        setCameraError(`${t.camera_error}: ${err.message || "Unknown error"}`);
       }
     }
   };
 
   const handleVideoClick = () => {
+    if (!stream) {
+      requestPermission();
+      return;
+    }
     if (videoRef.current) {
       videoRef.current.play().then(() => {
         setIsVideoPlaying(true);
@@ -270,6 +278,13 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
             <div className="flex flex-col items-center justify-center h-full p-10 text-center">
               <span className="material-icons-round text-6xl text-white/10 mb-4">videocam_off</span>
               <p className="text-white/30 text-xs font-medium uppercase tracking-widest mb-6 max-w-xs mx-auto leading-relaxed">{cameraError}</p>
+              
+              {(cameraError.includes('permission') || cameraError.includes('অনুমতি')) && (
+                <p className="text-amber-500/60 text-[9px] mb-6 max-w-xs mx-auto">
+                  If you are using an app like Appilix, please ensure the app itself has camera permissions in your phone settings.
+                </p>
+              )}
+
               <div className="flex flex-col gap-3 w-full max-w-[200px]">
                 {(cameraError.includes('permission') || cameraError.includes('অনুমতি')) ? (
                   <button 
@@ -373,8 +388,10 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
               <span className="material-icons-round text-xl">history</span>
             </button>
           </div>
-
-
+          
+          <div className="text-[8px] text-white/10 text-center uppercase tracking-widest">
+            Secure: {window.isSecureContext ? 'Yes' : 'No'} • Media: {!!navigator.mediaDevices ? 'Yes' : 'No'} • Stream: {!!stream ? 'Yes' : 'No'} • Iframe: {window.self !== window.top ? 'Yes' : 'No'}
+          </div>
         </div>
       </main>
 
