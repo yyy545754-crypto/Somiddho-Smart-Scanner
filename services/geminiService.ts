@@ -1,10 +1,18 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+let ai: GoogleGenAI | null = null;
+
+function getAI() {
+  if (!ai) {
+    ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+  }
+  return ai;
+}
 
 export async function analyzeScannedContent(content: string, imageUrl?: string) {
   try {
+    const aiClient = getAI();
     const prompt = `Analyze this content scanned from a QR code: "${content}". 
     Evaluate its safety and provide a helpful summary.
     If it's a URL, analyze its reputation, SSL status (if possible from URL), and potential risks.
@@ -17,7 +25,7 @@ export async function analyzeScannedContent(content: string, imageUrl?: string) 
       "safetyPoints": ["Point 1", "Point 2", "Point 3"] (exactly 3 points)
     }`;
 
-    const response = await ai.models.generateContent({
+    const response = await aiClient.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: imageUrl ? {
         parts: [

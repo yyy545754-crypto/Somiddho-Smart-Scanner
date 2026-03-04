@@ -35,27 +35,31 @@ const App: React.FC = () => {
   const t = translations[language];
 
   useEffect(() => {
-    const savedHistory = localStorage.getItem('somiddho_history');
-    if (savedHistory) setHistory(JSON.parse(savedHistory));
+    try {
+      const savedHistory = localStorage.getItem('somiddho_history');
+      if (savedHistory) setHistory(JSON.parse(savedHistory));
 
-    const savedPrefs = localStorage.getItem('somiddho_prefs');
-    if (savedPrefs) {
-      const prefs = JSON.parse(savedPrefs);
-      setVibrateOnScan(prefs.vibrate ?? true);
-      setSoundOnScan(prefs.sound ?? true);
-      setAutoOpenUrl(prefs.autoOpen ?? false);
-      setScanConfirmation(prefs.scanConfirmation ?? true);
-      setBatchMode(prefs.batchMode ?? false);
-      setAutoCopy(prefs.autoCopy ?? false);
-      setSearchEngine(prefs.searchEngine ?? SearchEngine.GOOGLE);
-      setLanguage(prefs.language ?? Language.EN);
-      setThemeColor(prefs.theme ?? '#f43f5e');
-      setLockEnabled(prefs.lockEnabled ?? false);
-      setSavedPin(prefs.pin ?? null);
+      const savedPrefs = localStorage.getItem('somiddho_prefs');
+      if (savedPrefs) {
+        const prefs = JSON.parse(savedPrefs);
+        setVibrateOnScan(prefs.vibrate ?? true);
+        setSoundOnScan(prefs.sound ?? true);
+        setAutoOpenUrl(prefs.autoOpen ?? false);
+        setScanConfirmation(prefs.scanConfirmation ?? true);
+        setBatchMode(prefs.batchMode ?? false);
+        setAutoCopy(prefs.autoCopy ?? false);
+        setSearchEngine(prefs.searchEngine ?? SearchEngine.GOOGLE);
+        setLanguage(prefs.language ?? Language.EN);
+        setThemeColor(prefs.theme ?? '#f43f5e');
+        setLockEnabled(prefs.lockEnabled ?? false);
+        setSavedPin(prefs.pin ?? null);
 
-      if (prefs.lockEnabled && prefs.pin) {
-        setIsLocked(true);
+        if (prefs.lockEnabled && prefs.pin) {
+          setIsLocked(true);
+        }
       }
+    } catch (e) {
+      console.error("Failed to load from localStorage:", e);
     }
   }, []);
 

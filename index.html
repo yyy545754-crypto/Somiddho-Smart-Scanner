@@ -93,6 +93,26 @@
 </head>
 <body class="bg-background-dark text-white font-display">
   <div id="root"></div>
+  <div id="error-display" style="display:none; position:fixed; inset:0; background:#1a0209; color:#f43f5e; padding:2rem; font-family:monospace; z-index:9999; overflow:auto;">
+    <h1 style="font-size:1.5rem; margin-bottom:1rem;">Application Error</h1>
+    <pre id="error-content" style="white-space:pre-wrap;"></pre>
+    <button onclick="window.location.reload()" style="margin-top:1rem; padding:0.5rem 1rem; background:#f43f5e; color:white; border:none; border-radius:0.5rem;">Reload App</button>
+  </div>
+  <script>
+    window.onerror = function(msg, url, lineNo, columnNo, error) {
+      const display = document.getElementById('error-display');
+      const content = document.getElementById('error-content');
+      display.style.display = 'block';
+      content.textContent = `Error: ${msg}\nURL: ${url}\nLine: ${lineNo}\nColumn: ${columnNo}\nStack: ${error ? error.stack : 'N/A'}`;
+      return false;
+    };
+    window.onunhandledrejection = function(event) {
+      const display = document.getElementById('error-display');
+      const content = document.getElementById('error-content');
+      display.style.display = 'block';
+      content.textContent = `Unhandled Rejection: ${event.reason}`;
+    };
+  </script>
   <script type="module" src="./index.tsx"></script>
 </body>
 </html>
