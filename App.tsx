@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { View, ScanResult, SearchEngine, Language } from './types';
 import { translations } from './i18n';
 import ScannerView from './components/ScannerView';

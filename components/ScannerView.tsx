@@ -44,14 +44,17 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
         const constraintSets = [
           { 
             video: { 
+              facingMode: { ideal: 'environment' }
+            } 
+          },
+          { 
+            video: { 
               facingMode: 'environment'
             } 
           },
           { 
             video: { 
-              facingMode: { ideal: 'environment' },
-              width: { ideal: 1280 },
-              height: { ideal: 720 }
+              facingMode: { ideal: 'user' }
             } 
           },
           { 
