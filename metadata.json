@@ -2,6 +2,7 @@
   "name": "Somiddho Smart Scanner",
   "description": "A professional, private, and secure QR code scanner and generator for daily use.",
   "requestFramePermissions": [
-    "camera"
+    "camera",
+    "microphone"
   ]
 }

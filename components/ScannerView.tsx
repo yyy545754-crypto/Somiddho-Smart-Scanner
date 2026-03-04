@@ -25,27 +25,79 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
   const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
+    let activeStream: MediaStream | null = null;
+
     async function setupCamera() {
       setCameraError(null);
+      
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        setCameraError("Your browser or app does not support camera access.");
+        return;
+      }
+
       try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment' }
-        });
+        // Try back camera first
+        const constraints = {
+          video: { 
+            facingMode: { ideal: 'environment' },
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          }
+        };
+        
+        let mediaStream: MediaStream;
+        try {
+          mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+        } catch (err) {
+          console.warn("Back camera failed, trying any camera", err);
+          mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        }
+
+        activeStream = mediaStream;
         setStream(mediaStream);
+        
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream;
+          videoRef.current.setAttribute('playsinline', 'true');
+          videoRef.current.setAttribute('muted', 'true');
+          videoRef.current.setAttribute('autoplay', 'true');
+          
+          videoRef.current.onloadedmetadata = () => {
+            videoRef.current?.play().catch(err => {
+              console.warn("Autoplay failed, waiting for user interaction", err);
+            });
+          };
         }
       } catch (err: any) {
-        setCameraError(err.message || "Camera not found");
+        console.error("Camera setup error:", err);
+        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+          setCameraError("Camera permission denied. Please allow camera access in your device settings.");
+        } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+          setCameraError("No camera found. If you are on a computer, make sure a webcam is connected.");
+        } else {
+          setCameraError(`Camera Error: ${err.message || "Unknown error"}`);
+        }
       }
     }
+
     setupCamera();
+
     return () => {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
+      if (activeStream) {
+        activeStream.getTracks().forEach(track => track.stop());
       }
     };
   }, []);
+
+  const retryCamera = () => {
+    window.location.reload();
+  };
+
+  const handleVideoClick = () => {
+    if (videoRef.current && videoRef.current.paused) {
+      videoRef.current.play().catch(console.error);
+    }
+  };
 
   const handleScanSuccess = (data: string, explicitImageData?: string) => {
     if (isProcessing || scanPaused) return;
@@ -147,10 +199,23 @@ const ScannerView: React.FC<ScannerViewProps> = ({ onResult, lastScan, onViewRec
         {cameraError ? (
           <div className="flex flex-col items-center justify-center h-full p-10 text-center">
             <span className="material-icons-round text-6xl text-white/10 mb-4">videocam_off</span>
-            <p className="text-white/30 text-xs font-medium uppercase tracking-widest">{cameraError}</p>
+            <p className="text-white/30 text-xs font-medium uppercase tracking-widest mb-6">{cameraError}</p>
+            <button 
+              onClick={retryCamera}
+              className="bg-primary text-black px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl active:scale-95 transition-transform"
+            >
+              Retry Camera
+            </button>
           </div>
         ) : (
-          <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
+          <video 
+            ref={videoRef} 
+            autoPlay 
+            playsInline 
+            muted 
+            onClick={handleVideoClick}
+            className="w-full h-full object-cover cursor-pointer" 
+          />
         )}
         <canvas ref={canvasRef} className="hidden" />
         <div className="absolute inset-0 bg-rose-950/40"></div>
